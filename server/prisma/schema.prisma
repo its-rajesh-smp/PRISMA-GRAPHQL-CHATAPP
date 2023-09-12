@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String?
+  email    String  @unique
+  password String
+  photo    String?
+
+  // Relation
+  InvitationSended  Invitation[] @relation("sender")
+  InvitationRecived Invitation[] @relation("reciver")
+
+  userChats ChatUser[]
+  Message   Message[]
+}
+
+model Invitation {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  senderId  String @db.ObjectId
+  reciverId String @db.ObjectId
+
+  isGroupInvitation Boolean @default(false)
+  invitationMessage String?
+  invitationImage   String?
+  invitationName    String?
+
+  // Relations
+  reciver User @relation(name: "reciver", fields: [reciverId], references: [id])
+  sender  User @relation("sender", fields: [senderId], references: [id])
+}
+
+model Chat {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  isGroup    Boolean    @default(false)
+  groupImage String?
+  groupName  String?
+  users      ChatUser[]
+  messages   Message[]
+}
+
+model ChatUser {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId String   @db.ObjectId
+  chatId String   @db.ObjectId
+  role   ChatRole
+
+  // Relation
+  user User @relation(fields: [userId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id])
+}
+
+enum ChatRole {
+  USER
+  ADMIN
+}
+
+model Message {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  body     String
+  senderId String  @db.ObjectId
+  chatId   String? @db.ObjectId
+
+  // Relation
+  sender User  @relation(fields: [senderId], references: [id])
+  Chat   Chat? @relation(fields: [chatId], references: [id])
+}
