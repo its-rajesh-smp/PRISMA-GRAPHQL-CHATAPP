@@ -15,13 +15,13 @@ exports.Query = {
     const user = await prisma.user.findUnique({
       where: { email },
       include: {
-        InvitationRecived: {
+        invitationRecived: {
           include: {
             reciver: true,
             sender: true,
           },
         },
-        InvitationSended: {
+        invitationSended: {
           include: {
             reciver: true,
             sender: true,

@@ -1,13 +1,13 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import FriendInvitation from "../components/FriendInvitation";
 
 const GET_USERS_INVITATION = gql`
   query {
     getUser {
-      InvitationRecived {
+      invitationRecived {
         id
         invitationMessage
         sender {
@@ -15,7 +15,7 @@ const GET_USERS_INVITATION = gql`
           email
         }
       }
-      InvitationSended {
+      invitationSended {
         id
         invitationMessage
         reciver {
@@ -40,7 +40,7 @@ function NotificationPage() {
   return (
     !loading && (
       <div>
-        {data.getUser.InvitationRecived.map((invitation) => (
+        {data.getUser.invitationRecived.map((invitation) => (
           <FriendInvitation
             id={invitation.id}
             key={invitation.id}
@@ -48,7 +48,7 @@ function NotificationPage() {
             message={invitation.invitationMessage}
           />
         ))}
-        {data.getUser.InvitationSended.map((invitation) => (
+        {data.getUser.invitationSended.map((invitation) => (
           <FriendInvitation
             sended={true}
             id={invitation.id}

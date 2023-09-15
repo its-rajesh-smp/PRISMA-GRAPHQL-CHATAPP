@@ -6,8 +6,9 @@ function Header() {
   const { name, id } = useSelector((state) => state.authSlice);
 
   return (
-    <div className=" flex gap-20 bg-black text-white h-16 px-20 items-center justify-between">
-      <div className=" flex gap-20">
+    <div className=" flex gap-20 bg-black text-white h-14 px-20 items-center justify-between">
+      <div className=" flex gap-20 items-center">
+        <h1 className=" text-3xl font-extrabold">Soho</h1>
         <NavLink to="/">
           <button>HOME</button>
         </NavLink>

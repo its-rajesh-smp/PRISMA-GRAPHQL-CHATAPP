@@ -6,6 +6,9 @@ import client from "../service/service";
 import { useDispatch, useSelector } from "react-redux";
 import { authUser } from "../store/reducers/authSlice";
 import Header from "../components/Header";
+import socket from "../socket/io";
+import { addNewChatMessage } from "../store/reducers/currentChatSlice";
+import { updateChatsWithLatestMessage } from "../store/reducers/chatSlices";
 
 const GETUSER = gql`
   query GETUSER {
@@ -21,6 +24,7 @@ const GETUSER = gql`
 function App() {
   const dispatch = useDispatch();
   const { authStatus } = useSelector((state) => state.authSlice);
+  const { chatId } = useSelector((state) => state.currentChatSlice);
 
   // Getting The User With Local idToken
   useEffect(() => {
@@ -36,13 +40,31 @@ function App() {
         },
       });
       dispatch(authUser(data.getUser));
+      socket.emit("CONNECT_USER", data.getUser.id);
     })();
   }, []);
+
+  function newMessageRecieveHandeler(newMessage) {
+    //  If The user's current chatId is matched with the new messages's chat id then i will show in the messagebox
+    if (chatId === newMessage.chat.id) {
+      dispatch(addNewChatMessage(newMessage));
+    }
+    // Update the latest Message
+    dispatch(updateChatsWithLatestMessage(newMessage));
+  }
+
+  // Reciving New Chat Messages
+  useEffect(() => {
+    socket.on("MESSAGE_RECIEVED", newMessageRecieveHandeler);
+    return () => {
+      socket.off("MESSAGE_RECIEVED", newMessageRecieveHandeler);
+    };
+  }, [chatId]);
 
   return (
     <div>
       {authStatus && <Header />}
-      <div className=" p-5">
+      <div>
         <MyRoutes />
       </div>
     </div>

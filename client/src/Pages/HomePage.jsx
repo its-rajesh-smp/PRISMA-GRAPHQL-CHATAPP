@@ -1,65 +1,25 @@
-import gql from "graphql-tag";
 import React from "react";
-import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import InviteUserForm from "../components/InviteUserForm";
-import ChatItem from "../components/ChatItem";
-
-const GETALLUSERCHATS = gql`
-  query GETALLUSERCHATS {
-    getUserChats {
-      id
-      chat {
-        isGroup
-        id
-        users {
-          role
-          user {
-            email
-            name
-          }
-        }
-      }
-    }
-  }
-`;
+import ChatsContainer from "../components/HomePage/ChatsContainer";
+import SideBarHeader from "../components/HomePage/SideBarHeader";
+import CreateMessage from "../components/ChatBox/CreateMessage";
+import MessagesContainer from "../components/ChatBox/MessagesContainer";
 
 function HomePage() {
-  const { idToken } = useSelector((state) => state.authSlice);
-
-  const { data, loading } = useQuery(GETALLUSERCHATS, {
-    context: {
-      headers: {
-        Authorization: idToken,
-      },
-    },
-  });
-
-  console.log(data);
+  const { inviteUserForm } = useSelector((state) => state.homePageSlice);
 
   return (
-    <div>
-      <InviteUserForm />
-      {!loading &&
-        data.getUserChats.map((chatUser) => {
-          const chatImage = chatUser.chat.chatImage
-            ? chatUser.chat.chatImage
-            : chatUser.chat.users[0].user.photo;
-
-          const chatName = chatUser.chat.chatImage
-            ? chatUser.chat.chatImage
-            : chatUser.chat.users[0].user.name;
-
-          return (
-            <ChatItem
-              id={chatUser.chat.id}
-              chatImage={chatImage}
-              chatName={chatName}
-              isGroup={chatUser.isGroup}
-              key={chatUser.id}
-            />
-          );
-        })}
+    <div className=" flex h-[calc(100vh-4rem)]">
+      <div className=" shrink-0 flex border-r-2 border-zinc-900 shadow-md  flex-col w-80  ">
+        <SideBarHeader />
+        <ChatsContainer />
+        {inviteUserForm && <InviteUserForm />}
+      </div>
+      <div className=" h-full flex flex-col justify-between  w-full">
+        <MessagesContainer />
+        <CreateMessage />
+      </div>
     </div>
   );
 }

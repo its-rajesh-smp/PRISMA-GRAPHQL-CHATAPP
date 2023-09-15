@@ -11,6 +11,18 @@ exports.Mutation = {
         chatId: chat,
         senderId: id,
       },
+      include: {
+        sender: true,
+        chat: {
+          include: {
+            members: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return message;

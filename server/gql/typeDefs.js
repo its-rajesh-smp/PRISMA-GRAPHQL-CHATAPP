@@ -9,8 +9,8 @@ const typeDefs = gql`
     photo: String
     idToken: String
 
-    InvitationSended: [Invitation]
-    InvitationRecived: [Invitation]
+    invitationSended: [Invitation]
+    invitationRecived: [Invitation]
   }
 
   input CreateUserInput {
@@ -34,10 +34,11 @@ const typeDefs = gql`
     isGroup: Boolean
     groupImage: String
     groupName: String
-    users: [ChatUser]
+    members: [Member]
+    messages: [Message]
   }
 
-  type ChatUser {
+  type Member {
     id: ID
     user: User
     chat: Chat
@@ -55,7 +56,7 @@ const typeDefs = gql`
     getUser: User
 
     # Chats
-    getUserChats: [ChatUser]
+    getUserChats: [Member]
 
     # Messages
     getAllMessages(chatId: String!): [Message]

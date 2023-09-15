@@ -76,7 +76,7 @@ exports.Mutation = {
     // Creating A Chat
     const chat = await prisma.chat.create({
       data: {
-        users: {
+        members: {
           create: [
             {
               userId: invitation.senderId,
